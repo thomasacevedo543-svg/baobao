@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Abastece B2B</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<style>
+:root{--hw:203px;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:#e5e7eb;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans SC","PingFang SC",sans-serif;color:#111827}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#fff;z-index:60}
+button{cursor:pointer}@media(min-width:768px){:root{--hw:436px}}
+@media print{body *{visibility:hidden}#remito,#remito *{visibility:visible}#remito{position:fixed;left:0;top:0;width:100%}.noprint{display:none!important}}
+</style></head>
+<body><div id="root"></div>
+<script>
+const {useState}=React, h=React.createElement;
+
+
+/* ===== Diccionario i18n (reemplazable por un archivo JSON real) ===== */
+const I18N={
+es:{buyer:'Comprador',supplier:'Proveedor',admin:'Administrador',shipTo:'Enviando a:',change:'Cambiar',suppliers:'Proveedores',min:'Mínimo',ship:'Envío',free:'Envío gratis',back:'Volver',search:'Buscar productos…',offers:'Ofertas destacadas',offer:'Oferta',catalog:'Catálogo',unit:'Unidad',pack:'Bulto',stock:'Stock',cart:'Carrito',empty:'El carrito está vacío',address:'Dirección de entrega',subtotal:'Subtotal',shipping:'Envío',total:'Total',order:'Ordenar',minLeft:'Faltan {n} para el mínimo',receipt:'Comprobante / Remito',orderNo:'Factura Nº',deliverTo:'Entregar en',item:'Producto',qty:'Cant.',price:'Precio',amount:'Importe',view:'Ver / Imprimir Remito PDF',print:'Imprimir',close:'Cerrar',keep:'Seguir comprando',ordersIn:'Pedidos recibidos',noOrders:'Aún no hay pedidos',stockPrices:'Stock y precios',pending:'Pendientes de aprobación',nonePending:'No hay proveedores pendientes',approve:'Aprobar',salesBySup:'Ventas por proveedor',sold:'Vendido',comm:'Comisión 5%',sup:'Proveedor',sign:'Recibí conforme',thanks:'¡Pedido confirmado!',freeS:'Gratis',client:'Cliente',dup:'Ese usuario ya existe',supLogin:'Acceso para proveedores',pending2:'Tu cuenta espera la aprobación del administrador: los compradores todavía no te ven.',login:'Iniciar sesión',register:'Registrarme',name:'Nombre',user:'Usuario',email:'Correo electrónico',pass:'Contraseña',mainAddr:'Dirección principal',forgot:'¿Olvidaste tu contraseña?',sendLink:'Enviar enlace al correo',openLink:'Abrir enlace del correo (demo)',newPass:'Nueva contraseña',save:'Guardar',mailSent:'Te enviamos un correo a',noMail:'No encontramos ese correo',badLogin:'Usuario o contraseña incorrectos',req:'Completá todos los campos',saved:'Contraseña actualizada',logout:'Salir',isSup:'Soy proveedor (requiere aprobación)',zone:'Zona de reparto',pendOk:'Cuenta enviada: falta la aprobación del administrador',addAddr:'Agregar',newAddr:'Nueva dirección',oos:'Sin stock',received:'Marcar como recibido',rate:'Calificá al proveedor',comment:'Comentario breve',sendRev:'Enviar reseña',thanksRev:'Gracias por tu reseña',myOrders:'Mis pedidos',newOrd:'Nuevo pedido',mailed:'Pedido enviado al proveedor por correo',profile:'Perfil del proveedor',shipFee:'Costo de envío (0 = gratis)',minBuy:'Monto mínimo',addProd:'Agregar producto',photo:'Foto',disc:'Desc. %',bulk:'Carga masiva por línea: nombre,precio unidad,stock unidad,precio caja,stock caja',load:'Cargar',allOps:'Todas las operaciones',date:'Fecha',reviews:'Reseñas',desc:'Descripción breve',perUnit:'Por unidad',perBox:'Caja completa',leaveEmpty:'Dejá vacío lo que no vendas (unidad o caja).',pName:'Nombre del producto',unitS:'unid.',boxS:'caja(s)',report:'Reportar proveedor',reportTxt:'Contanos qué pasó…',sendRep:'Enviar queja',repSent:'Queja enviada al administrador',complaints:'Quejas de compradores',noComp:'Sin quejas',markSeen:'Marcar vista',cmp:'quejas',mySup:'Gestión de proveedores',suspend:'Suspender',reactivate:'Reactivar',del:'Eliminar',sure:'¿Seguro? Tocá de nuevo',suspended:'Suspendido',paid:'Pagó',unpaid:'Sin pagar',monthFee:'Tarifa mensual fija por proveedor ($)',expected:'A cobrar este mes',collected:'Cobrado',suspMsg:'Tu cuenta está suspendida: los compradores no ven tus productos. Contactá al administrador.',warns:'Llamados de atención',warnPh:'Motivo del llamado de atención…',warnBtn:'Llamar la atención',fixed:'Solucionado',profileV:'Ver perfil ›',flow:'Sugerido: revisá las quejas, llamá la atención y suspendé solo si no se soluciona.',warnMsg:'El administrador te llamó la atención',noRev:'Sin reseñas',supName:'Nombre del negocio',addrS:'Dirección',phone:'Teléfono',logoPhoto:'Foto de perfil',closedS:'aviso cerrado por el proveedor',bugBtn:'Reportar bug o error',bugPh:'Contanos qué falló y en qué pantalla estabas…',bugSend:'Enviar reporte',bugSent:'¡Gracias! Reporte enviado. Tocá para enviar otro.',bugsT:'Bugs reportados',noBugs:'Sin bugs reportados',admins:'Administradores',coreA:'principal',extraA:'adicional',revoke:'Quitar admin',enableAdm:'Habilitar otra cuenta como administrador (solo cuentas de comprador)',adUser:'Usuario de la cuenta',adBtn:'Habilitar como administrador',adNone:'No existe una cuenta de comprador con ese usuario',adOk:'Cuenta habilitada como administrador',noSups:'Todavía no hay proveedores disponibles'},
+zh:{buyer:'买家',supplier:'供应商',admin:'管理员',shipTo:'配送至：',change:'更换',suppliers:'供应商列表',min:'起订额',ship:'运费',free:'免运费',back:'返回',search:'搜索商品…',offers:'特价推荐',offer:'特价',catalog:'商品目录',unit:'单价',pack:'整箱',stock:'库存',cart:'购物车',empty:'购物车为空',address:'配送地址',subtotal:'小计',shipping:'运费',total:'合计',order:'下单',minLeft:'距起订额还差 {n}',receipt:'回执 / 送货单',orderNo:'发票号',deliverTo:'收货地址',item:'商品',qty:'数量',price:'价格',amount:'金额',view:'查看 / 打印送货单 PDF',print:'打印',close:'关闭',keep:'继续采购',ordersIn:'收到的订单',noOrders:'暂无订单',stockPrices:'库存与价格管理',pending:'待审核供应商',nonePending:'没有待审核的供应商',approve:'批准',salesBySup:'各供应商销售额',sold:'已售总额',comm:'佣金 5%',sup:'供应商',sign:'收货签字',thanks:'订单已确认！',freeS:'免费',client:'客户',dup:'用户名已存在',supLogin:'供应商登录',pending2:'您的账户正在等待管理员审核，买家暂时看不到您。',login:'登录',register:'注册',name:'姓名',user:'用户名',email:'电子邮箱',pass:'密码',mainAddr:'主要地址',forgot:'忘记密码？',sendLink:'发送重置链接到邮箱',openLink:'打开邮件中的链接（演示）',newPass:'新密码',save:'保存',mailSent:'我们已发送邮件至',noMail:'未找到该邮箱',badLogin:'用户名或密码错误',req:'请填写所有字段',saved:'密码已更新',logout:'退出',isSup:'我是供应商（需管理员审核）',zone:'配送区域',pendOk:'账户已提交，等待管理员审核',addAddr:'添加',newAddr:'新地址',oos:'缺货',received:'标记为已收货',rate:'为供应商评分',comment:'简短评论',sendRev:'提交评价',thanksRev:'感谢您的评价',myOrders:'我的订单',newOrd:'新订单',mailed:'订单已通过邮件发送给供应商',profile:'供应商资料',shipFee:'运费（0 = 免运费）',minBuy:'最低订购额',addProd:'添加商品',photo:'照片',disc:'折扣 %',bulk:'批量导入，每行：名称,单价,单件库存,整箱价,整箱库存',load:'导入',allOps:'所有交易',date:'日期',reviews:'评价',desc:'简短描述',perUnit:'单件',perBox:'整箱',leaveEmpty:'不销售的（单件或整箱）请留空。',pName:'商品名称',unitS:'件',boxS:'箱',report:'投诉供应商',reportTxt:'请说明情况…',sendRep:'提交投诉',repSent:'投诉已发送给管理员',complaints:'买家投诉',noComp:'暂无投诉',markSeen:'标记已读',cmp:'投诉',mySup:'供应商管理',suspend:'暂停',reactivate:'恢复',del:'删除',sure:'确定？再点一次',suspended:'已暂停',paid:'已付款',unpaid:'未付款',monthFee:'每个供应商固定月费 ($)',expected:'本月应收',collected:'已收',suspMsg:'您的账户已被暂停：买家看不到您的商品。请联系管理员。',warns:'警告记录',warnPh:'警告原因…',warnBtn:'发出警告',fixed:'已解决',profileV:'查看资料 ›',flow:'建议：先查看投诉并发出警告，若仍未解决再暂停账户。',warnMsg:'管理员已向您发出警告',noRev:'暂无评价',supName:'店铺名称',addrS:'地址',phone:'电话',logoPhoto:'头像',closedS:'供应商已关闭提示',bugBtn:'反馈漏洞或错误',bugPh:'请描述出了什么问题以及在哪个页面…',bugSend:'提交反馈',bugSent:'谢谢！已提交。点击再次提交。',bugsT:'已反馈的漏洞',noBugs:'暂无反馈',admins:'管理员',coreA:'主管理员',extraA:'附加',revoke:'取消管理员',enableAdm:'将其他账户设为管理员（仅限买家账户）',adUser:'账户用户名',adBtn:'设为管理员',adNone:'没有该用户名的买家账户',adOk:'已设为管理员',noSups:'暂无可用供应商'}
+};
+
+/* ===== Datos demo ===== */
+const USERS0=[
+{user:'Thomas',pass:'Thomas2026',role:'admin',name:'Thomas',email:'',core:1},
+{user:'Oscar',pass:'Oscar2026',role:'admin',name:'Oscar',email:'',core:1}
+];
+const SUP0=[];
+const P0=[];
+const SEED=[];
+const C0=[];
+
+const $=n=>'$'+Math.round(n).toLocaleString('es-AR');
+
+const inv=o=>String(o.n).padStart(4,'0');
+
+function App(){
+const [lang,setLang]=useState('es'),[role,setRole]=useState('buyer'),[pick,setPick]=useState(false),
+[sups,setSups]=useState(SUP0),[prods,setProds]=useState(P0),[orders,setOrders]=useState(SEED),
+[screen,setScreen]=useState('list'),[sid,setSid]=useState(null),[cart,setCart]=useState({}),[q,setQ]=useState(''),
+[rec,setRec]=useState(null),[doc,setDoc]=useState(null),
+[users,setUsers]=useState(USERS0),[meU,setMeU]=useState(null),[auth,setAuth]=useState('login'),[f,setF]=useState({}),[msg,setMsg]=useState(''),[revs,setRevs]=useState([]),[comps,setComps]=useState(C0),[feeM,setFeeM]=useState(30000),[cf,setCf]=useState(null),[vs,setVs]=useState(null),[bugs,setBugs]=useState([]),[bg,setBg]=useState(0),[rep,setRep]=useState(null);
+const t=k=>I18N[lang][k], L=o=>o[lang];
+const me=users.find(u=>u.user===meU),isB=!!me&&me.role==='buyer',isA=!!me&&me.role==='admin',isS=!!me&&me.role==='supplier',asId=me&&me.sid,addrs=(me&&me.addrs)||[],br=(me&&me.act)||0,curAddr=addrs[br]||'';
+
+const add=(p,v,d)=>setCart(c=>{const k=p.id+v,n=Math.max(0,Math.min(p[v].stock,(c[k]||0)+d)),x={...c};n?x[k]=n:delete x[k];return x});
+const sup=sups.find(s=>s.id===sid),supOf=id=>sups.find(s=>s.id===id)||{logo:'🏭',es:'(proveedor eliminado)',zh:'(已删除供应商)'};
+const lines=prods.filter(p=>p.sid===sid).flatMap(p=>['u','b'].filter(v=>p[v]&&cart[p.id+v]).map(v=>({p,v,k:p.id+v,q:cart[p.id+v],pr:p[v].price})));
+const sub=lines.reduce((a,l)=>a+l.q*l.pr,0), fee=lines.length&&sup?sup.fee:0, total=sub+fee;
+const cnt=lines.reduce((a,l)=>a+l.q,0);
+const place=()=>{
+ const nn=orders.filter(x=>x.sid===sid).length+1;const o={n:nn,id:sid+'-'+nn,sid,uid:me.user,client:me.name,addr:curAddr,items:lines.map(l=>({pid:l.p.id,v:l.v,q:l.q,pr:l.pr})),sub,fee,total,nw:1,date:new Date().toISOString()};
+ setOrders([o,...orders]);
+ setProds(ps=>ps.map(p=>p.sid===sid?{...p,u:p.u&&{...p.u,stock:p.u.stock-(cart[p.id+'u']||0)},b:p.b&&{...p.b,stock:p.b.stock-(cart[p.id+'b']||0)}}:p));
+ setCart(c=>{const x={...c};lines.forEach(l=>delete x[l.k]);return x});
+ setRec(o);setScreen('receipt');
+};
+const repBox=s2=>rep===s2?h('div',{className:'p-3 bg-red-50 rounded-2xl space-y-2'},h('textarea',{value:f.rt||'',onChange:e=>setF({...f,rt:e.target.value}),rows:3,placeholder:t('reportTxt'),className:'w-full border border-gray-200 rounded-lg p-2 text-sm'}),btn(()=>{if(!(f.rt||'').trim())return;setComps(c=>[{id:Date.now(),sid:s2,uid:me.user,who:me.name,txt:f.rt.trim(),date:new Date().toISOString(),seen:0},...c]);setF({...f,rt:''});setRep(-s2)},'sendRep','bg-red-600 text-white')):rep===-s2?h('p',{className:'text-sm text-emerald-700 text-center'},'✅ '+t('repSent')):h('button',{onClick:()=>setRep(s2),className:'w-full h-11 rounded-xl bg-red-50 text-red-600 text-sm font-semibold'},'⚠️ '+t('report'));
+
+const Step=(p,v)=>h('div',{className:'flex items-center gap-2'},
+ h('button',{onClick:()=>add(p,v,-1),disabled:!cart[p.id+v],className:'w-11 h-11 rounded-xl bg-gray-100 text-2xl font-bold disabled:opacity-30'},'−'),
+ h('span',{className:'w-6 text-center font-bold'},cart[p.id+v]||0),
+ h('button',{onClick:()=>add(p,v,1),disabled:(cart[p.id+v]||0)>=p[v].stock,className:'w-11 h-11 rounded-xl bg-emerald-600 text-white text-2xl font-bold disabled:opacity-30'},'+'));
+
+const Lg=(s,c)=>s.img?h('img',{src:s.img,className:c||'w-8 h-8 rounded-full object-cover inline-block'}):s.logo;
+const vars=p=>['u','b'].filter(v=>p[v]&&p[v].price>0);
+const Row=(p,only)=>h('div',{key:p.id,className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},
+ h('div',{className:'flex gap-3 items-center'},
+  h('div',{className:'w-16 h-16 rounded-xl bg-emerald-50 text-4xl flex items-center justify-center shrink-0 overflow-hidden'},p.img?h('img',{src:p.img,className:'w-full h-full object-cover'}):p.e),
+  h('div',{className:'flex-1 min-w-0'},h('div',{className:'font-semibold text-sm leading-tight'},L(p)),p.desc?h('div',{className:'text-xs text-gray-500'},p.desc):null)),
+ ...(only||vars(p)).map(v=>h('div',{key:v,className:'flex items-center justify-between gap-2 pt-2 border-t border-gray-100'},
+  h('div',null,h('div',{className:'text-xs text-gray-500'},t(v==='u'?'perUnit':'perBox')),h('div',{className:'font-bold text-emerald-700'},$(p[v].price)),
+   h('div',{className:'text-xs '+(p[v].stock<10?'text-orange-600 font-semibold':'text-gray-500')},p[v].stock?t('stock')+': '+p[v].stock:'⛔ '+t('oos'))),
+  Step(p,v))));
+
+/* ---- Comprador ---- */
+const bList=()=>h('div',{className:'p-3 space-y-3 pb-24'},h('div',{className:'flex justify-between items-center'},h('h2',{className:'font-bold text-lg'},t('suppliers')),h('button',{onClick:()=>setMeU(null),className:'text-xs text-gray-500 h-9 px-2'},'👤 '+me.user+' · '+t('logout'))),
+ sups.filter(s=>s.ok&&!s.susp).length?null:h('p',{className:'text-sm text-gray-500 text-center py-6'},t('noSups')),h('div',{className:'grid md:grid-cols-2 gap-3'},sups.filter(s=>s.ok&&!s.susp).map(s=>h('button',{key:s.id,onClick:()=>{setSid(s.id);setQ('');setScreen('sup')},className:'w-full flex gap-3 items-center p-4 bg-white rounded-2xl border border-gray-100 text-left'},
+  h('div',{className:'w-14 h-14 rounded-2xl bg-blue-50 text-3xl flex items-center justify-center overflow-hidden'},Lg(s,'w-full h-full object-cover')),
+  h('div',{className:'flex-1'},h('div',{className:'font-semibold'},L(s)),
+   h('div',{className:'text-sm text-amber-500'},'★ '+(+s.r).toFixed(1)+' ',h('span',{className:'text-gray-400'},'('+s.n+')')),
+   h('div',{className:'text-xs text-gray-500'},t('min')+' '+$(s.min)),
+   h('span',{className:'inline-block mt-1 text-xs px-2 py-0.5 rounded-full '+(s.fee?'bg-gray-100 text-gray-600':'bg-emerald-100 text-emerald-700')},s.fee?t('ship')+': '+$(s.fee):t('free'))),
+  h('span',{className:'text-2xl text-gray-300'},'›')))),h('h3',{className:'font-bold pt-2'},t('myOrders')),...orders.filter(o=>o.uid===(me&&me.user)).map(o=>h('button',{key:o.id,onClick:()=>{setRec(o);setScreen('receipt')},className:'w-full flex justify-between p-3 bg-white rounded-xl border border-gray-100 text-sm'},h('b',null,'Nº '+inv(o)+' · '+L(supOf(o.sid))),h('span',null,$(o.total)))));
+
+const bSup=()=>{
+ const list=prods.filter(p=>p.sid===sid&&vars(p).length&&L(p).toLowerCase().includes(q.toLowerCase()));
+ return h('div',{className:'p-3 pb-28 space-y-3'},
+  h('button',{onClick:()=>setScreen('list'),className:'text-sm text-blue-600 font-medium h-9'},'‹ '+t('back')),
+  h('div',null,h('h2',{className:'font-bold text-lg flex items-center gap-2'},Lg(sup,'w-8 h-8 rounded-lg object-cover'),L(sup)),sup.addr?h('div',{className:'text-xs text-gray-500'},'📍 '+sup.addr+(sup.phone?' · 📞 '+sup.phone:'')):null,h('div',{className:'text-xs text-gray-500'},t('min')+' '+$(sup.min)+' · '+(sup.fee?t('ship')+': '+$(sup.fee):t('free')))),
+  h('input',{value:q,onChange:e=>setQ(e.target.value),placeholder:t('search'),className:'w-full h-12 px-4 rounded-xl bg-white border border-gray-200 outline-none focus:border-emerald-500'}),
+  h('h3',{className:'font-bold'},t('catalog')),h('div',{className:'grid md:grid-cols-2 gap-3 items-start'},list.map(p=>Row(p))),revs.some(r=>r.sid===sid)?h('h3',{className:'font-bold pt-2'},t('reviews')):null,...revs.filter(r=>r.sid===sid).map((r,i)=>h('div',{key:i,className:'p-3 bg-white rounded-xl text-sm border border-gray-100'},h('span',{className:'text-amber-500'},'★'.repeat(r.st)),' '+r.who+': '+r.cm)),
+  repBox(sid));
+};
+
+const bCart=()=>h('div',{className:'p-3 pb-28 space-y-3'},
+ h('button',{onClick:()=>setScreen('sup'),className:'text-sm text-blue-600 font-medium h-9'},'‹ '+t('back')),
+ h('h2',{className:'font-bold text-lg'},'🛒 '+t('cart')+' · '+L(sup)),
+ lines.length?[...new Set(lines.map(l=>l.p))].map(p=>Row(p,lines.filter(l=>l.p===p).map(l=>l.v))):h('p',{className:'text-gray-500 py-8 text-center'},t('empty')),
+ lines.length?h('div',{className:'p-4 bg-white rounded-2xl border border-gray-100 space-y-2'},
+  h('div',{className:'text-sm'},h('span',{className:'text-gray-500'},t('address')+': '),h('b',null,curAddr)),
+  h('div',{className:'flex justify-between text-sm'},h('span',null,t('subtotal')),h('span',null,$(sub))),
+  h('div',{className:'flex justify-between text-sm'},h('span',null,t('shipping')),h('span',null,fee?$(fee):t('freeS'))),
+  h('div',{className:'flex justify-between text-lg font-bold border-t pt-2'},h('span',null,t('total')),h('span',{className:'text-emerald-700'},$(total))),
+  sub<sup.min?h('div',{className:'text-sm text-orange-600'},t('minLeft').replace('{n}',$(sup.min-sub))):null,
+  h('button',{onClick:place,disabled:sub<sup.min,className:'w-full h-14 rounded-2xl bg-emerald-600 text-white text-lg font-bold disabled:bg-gray-300'},t('order'))):null);
+
+const bRec=()=>h('div',{className:'p-3 pb-28 space-y-3'},
+ h('div',{className:'text-center py-4'},h('div',{className:'text-5xl'},'✅'),h('h2',{className:'font-bold text-xl mt-2'},t('thanks')),h('div',{className:'text-gray-500'},t('orderNo')+' '+inv(rec)),h('div',{className:'text-xs text-emerald-700 mt-1'},'📧 '+t('mailed'))),
+ h('div',{className:'rounded-xl overflow-hidden border border-gray-200'},Doc(rec,true)),
+ h('button',{onClick:()=>setDoc(rec),className:'w-full h-14 rounded-2xl bg-blue-600 text-white font-bold'},'🖨️ '+t('view')),
+ live.rated?h('p',{className:'text-center text-emerald-700'},'⭐ '+t('thanksRev')):live.got?h('div',{className:'p-4 bg-white rounded-2xl border border-gray-100 space-y-2'},h('b',null,t('rate')),h('div',{className:'flex gap-1 text-4xl'},[1,2,3,4,5].map(n=>h('button',{key:n,onClick:()=>setF({...f,stars:n}),className:n<=(f.stars||0)?'text-amber-400':'text-gray-300'},'★'))),fld('cm','comment'),btn(()=>{if(!f.stars)return;const s2=live.sid;setSups(ss=>ss.map(s=>s.id===s2?{...s,r:(s.r*s.n+f.stars)/(s.n+1),n:s.n+1}:s));setRevs(r=>[{sid:s2,st:f.stars,cm:f.cm||'',who:me.user},...r]);setOrders(os=>os.map(o=>o.id===live.id?{...o,rated:1}:o));setF({})},'sendRev')):btn(()=>setOrders(os=>os.map(o=>o.id===live.id?{...o,got:1}:o)),'received','bg-amber-100 text-amber-800'),
+ repBox(live.sid),h('button',{onClick:()=>setScreen('list'),className:'w-full h-14 rounded-2xl bg-gray-100 font-bold'},t('keep')));
+
+/* ---- Remito / ticket A4 ---- */
+function Doc(o,mini){
+ const s=supOf(o.sid);
+ return h('div',{id:mini?undefined:'remito',className:'bg-white text-gray-900 text-sm '+(mini?'p-3 text-xs':'p-8 min-h-[700px]')},
+  h('div',{className:'flex justify-between border-b-2 border-gray-800 pb-3'},
+   h('div',null,h('div',{className:'text-xl font-bold flex items-center gap-2'},Lg(s,'w-8 h-8 rounded object-cover'),L(s)),h('div',{className:'text-xs text-gray-500'},t('receipt')),s.addr?h('div',{className:'text-xs text-gray-500'},s.addr+(s.phone?' · '+s.phone:'')):null),
+   h('div',{className:'text-right'},h('div',{className:'font-bold'},t('orderNo')+' '+inv(o)),h('div',{className:'text-xs'},new Date(o.date).toLocaleDateString(lang==='zh'?'zh-CN':'es-AR')))),
+  h('div',{className:'py-3'},h('div',null,h('b',null,t('client')+': '),o.client),h('div',null,h('b',null,t('deliverTo')+': '),o.addr)),
+  h('table',{className:'w-full text-xs'},
+   h('thead',null,h('tr',{className:'border-b-2 text-left'},[t('item'),t('qty'),t('price'),t('amount')].map((x,i)=>h('th',{key:i,className:'py-1'},x)))),
+   h('tbody',null,o.items.map(i=>{const p=prods.find(x=>x.id===i.pid)||{e:'📦',es:'—',zh:'—'};return h('tr',{key:i.pid+(i.v||''),className:'border-b'},
+    h('td',{className:'py-1.5'},p.e+' '+L(p)),h('td',null,i.q+' '+t(i.v==='b'?'boxS':'unitS')),h('td',null,$(i.pr)),h('td',null,$(i.q*i.pr)))}))),
+  h('div',{className:'mt-3 ml-auto w-48 space-y-1 text-right'},
+   h('div',{className:'flex justify-between'},h('span',null,t('subtotal')),h('span',null,$(o.sub))),
+   h('div',{className:'flex justify-between'},h('span',null,t('shipping')),h('span',null,o.fee?$(o.fee):t('freeS'))),
+   h('div',{className:'flex justify-between font-bold text-base border-t-2 border-gray-800 pt-1'},h('span',null,t('total')),h('span',null,$(o.total)))),
+  mini?null:h('div',{className:'mt-24 flex justify-between text-xs text-gray-500'},h('div',{className:'border-t border-gray-400 w-40 pt-1 text-center'},t('sign')),h('div',{className:'border-t border-gray-400 w-40 pt-1 text-center'},L(s))));
+}
+
+/* ---- Proveedor ---- */
+const edit=(id,k,v)=>setProds(ps=>ps.map(p=>p.id===id?{...p,[k]:v}:p));
+const num=(p,k,l)=>h('label',{className:'text-[11px] text-gray-500 flex-1 min-w-0'},t(l),h('input',{type:'number',inputMode:'decimal',min:0,value:p[k]===undefined?'':p[k],onChange:e=>edit(p.id,k,e.target.value===''?'':Math.max(0,+e.target.value)),className:'w-full h-11 border border-gray-200 rounded-lg px-2 text-base'}));
+const setV=(id,v,k,val)=>setProds(ps=>ps.map(p=>p.id===id?{...p,[v]:{price:0,stock:0,...p[v],[k]:val}}:p));
+const numV=(p,v,k,l)=>h('label',{key:k,className:'text-[11px] text-gray-500 flex-1 min-w-0'},t(l),h('input',{type:'number',inputMode:'decimal',min:0,value:(p[v]&&p[v][k])??'',onChange:e=>setV(p.id,v,k,e.target.value===''?'':Math.max(0,+e.target.value)),className:'w-full h-11 border border-gray-200 rounded-lg px-2 text-base'}));
+const pView=()=>{
+ const mine=orders.filter(o=>o.sid===asId),ps=prods.filter(p=>p.sid===asId),sp=sups.find(x=>x.id===asId);
+ return h('div',{className:'p-3 pb-24 space-y-3'},
+  h('div',{className:'flex items-center justify-between'},h('h2',{className:'font-bold text-lg flex items-center gap-2'},Lg(sp,'w-8 h-8 rounded-lg object-cover'),L(sp)),h('button',{onClick:()=>setMeU(null),className:'text-xs text-gray-500 h-9 px-2'},'👤 '+me.user+' · '+t('logout'))),
+  sp.ok?null:h('div',{className:'p-3 rounded-xl bg-amber-50 text-amber-800 text-sm'},t('pending2')),
+  sp.susp?h('div',{className:'p-3 rounded-xl bg-red-50 text-red-700 text-sm'},'⛔ '+t('suspMsg')):null,
+  ...(sp.warns||[]).filter(w=>!w.fixed&&!w.dis).map(w=>h('div',{key:w.id,className:'p-3 rounded-xl bg-orange-50 text-orange-800 text-sm flex items-start gap-2'},h('div',{className:'flex-1'},'⚠️ '+t('warnMsg')+': '+w.txt),h('button',{onClick:()=>setSups(ss=>ss.map(x=>x.id===sp.id?{...x,warns:x.warns.map(y=>y.id===w.id?{...y,dis:1}:y)}:x)),className:'w-9 h-9 shrink-0 rounded-lg bg-white/70 text-lg leading-none'},'✕'))),
+  h('h2',{className:'font-bold text-lg'},t('ordersIn')+' ('+mine.length+')'),
+  ...(mine.length?mine.map(o=>h('div',{key:o.id,className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},
+   h('div',{className:'flex justify-between'},h('b',null,t('orderNo')+' '+inv(o)+(o.nw?' 🔔':'')),h('b',{className:'text-emerald-700'},$(o.total))),
+   h('div',{className:'text-xs text-gray-500'},o.client+' · '+t('qty')+' '+o.items.reduce((a,i)=>a+i.q,0)),
+   h('button',{onClick:()=>{setDoc(o);setOrders(os=>os.map(x=>x.id===o.id?{...x,nw:0}:x))},className:'w-full h-12 rounded-xl bg-blue-600 text-white text-sm font-semibold'},'🖨️ '+t('view')))):[h('p',{key:'n',className:'text-sm text-gray-500'},t('noOrders'))]),
+  h('h2',{className:'font-bold text-lg pt-2'},t('stockPrices')),
+  h('p',{className:'text-xs text-gray-500'},t('leaveEmpty')),
+  ...ps.map(p=>h('div',{key:p.id,className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},
+   h('div',{className:'flex gap-3 items-center'},
+    h('label',{className:'w-16 h-16 rounded-xl bg-emerald-50 text-3xl flex items-center justify-center shrink-0 overflow-hidden relative'},p.img?h('img',{src:p.img,className:'w-full h-full object-cover'}):p.e,h('input',{type:'file',accept:'image/*',className:'absolute inset-0 opacity-0',onChange:e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>edit(p.id,'img',r.result);r.readAsDataURL(fl)}})),
+    h('input',{value:p[lang],onChange:e=>edit(p.id,lang,e.target.value),className:'flex-1 min-w-0 h-11 border border-gray-200 rounded-lg px-2 font-semibold'}),
+    h('button',{onClick:()=>setProds(x=>x.filter(y=>y.id!==p.id)),className:'w-11 h-11 rounded-xl bg-red-50 text-red-600 text-lg'},'🗑')),
+   h('input',{value:p.desc||'',onChange:e=>edit(p.id,'desc',e.target.value),placeholder:t('desc'),className:'w-full h-11 border border-gray-200 rounded-lg px-2 text-sm'}),
+   h('div',{className:'flex gap-2'},['u','b'].map(v=>h('div',{key:v,className:'flex-1 p-2 rounded-xl bg-gray-50 space-y-1'},h('div',{className:'text-xs font-semibold'},t(v==='u'?'perUnit':'perBox')),h('div',{className:'flex gap-1'},numV(p,v,'price','price'),numV(p,v,'stock','stock'))))))),
+  pExtra());
+};
+
+/* ---- Administrador ---- */
+const aView=()=>{
+ const soldOf=id=>orders.filter(o=>o.sid===id).reduce((a,o)=>a+o.total,0),ap=sups.filter(s=>s.ok),pend=sups.filter(s=>!s.ok),act=ap.filter(s=>!s.susp),cc=id=>comps.filter(c=>c.sid===id).length;
+ const upS=(id,fn)=>setSups(x=>x.map(y=>y.id===id?fn(y):y));
+ const delSup=id=>{setSups(x=>x.filter(y=>y.id!==id));setProds(x=>x.filter(y=>y.sid!==id));setUsers(x=>x.filter(u=>u.sid!==id));setComps(x=>x.filter(c=>c.sid!==id));setCf(null)};
+ const bdg=(c,x)=>h('span',{key:x,className:'text-[10px] px-2 py-0.5 rounded-full '+c},x);
+ const adminsBox=()=>h('div',{className:'space-y-2'},
+  h('h2',{className:'font-bold text-lg pt-2'},'👑 '+t('admins')),
+  ...users.filter(u=>u.role==='admin').map(u=>h('div',{key:u.user,className:'flex items-center gap-2 p-3 bg-white rounded-2xl border border-gray-100'},h('div',{className:'flex-1 text-sm font-medium'},u.name),h('span',{className:'text-[10px] px-2 py-0.5 rounded-full '+(u.core?'bg-emerald-100 text-emerald-700':'bg-blue-100 text-blue-700')},t(u.core?'coreA':'extraA')),u.core?null:h('button',{onClick:()=>setUsers(us=>us.map(x=>x.user===u.user?{...x,role:'buyer'}:x)),className:'h-10 px-3 rounded-lg bg-red-50 text-red-600 text-sm'},t('revoke')))),
+  h('div',{className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},h('div',{className:'text-xs text-gray-500'},t('enableAdm')),h('input',{value:f.ad||'',onChange:e=>setF({...f,ad:e.target.value,adMsg:''}),placeholder:t('adUser'),className:'w-full h-11 border border-gray-200 rounded-lg px-2 text-sm'}),f.adMsg?h('div',{className:'text-sm '+(f.adMsg==='adOk'?'text-emerald-700':'text-red-600')},t(f.adMsg)):null,btn(()=>{const u=users.find(x=>x.role==='buyer'&&x.user.toLowerCase()===(f.ad||'').trim().toLowerCase());if(!u)return setF({...f,adMsg:'adNone'});setUsers(us=>us.map(x=>x.user===u.user?{...x,role:'admin'}:x));setF({...f,ad:'',adMsg:'adOk'})},'adBtn','bg-gray-900 text-white')));
+ const detail=s=>{const cs=comps.filter(c=>c.sid===s.id),rv=revs.filter(r=>r.sid===s.id),ws=s.warns||[],dt=d=>new Date(d).toLocaleDateString(lang==='zh'?'zh-CN':'es-AR');
+  return h('div',{className:'p-3 pb-24 space-y-3'},
+   h('button',{onClick:()=>setVs(null),className:'text-sm text-blue-600 font-medium h-9'},'‹ '+t('back')),
+   h('h2',{className:'font-bold text-lg flex items-center gap-2'},Lg(s,'w-8 h-8 rounded-lg object-cover'),L(s)),
+   s.addr?h('div',{className:'text-xs text-gray-500'},'📍 '+s.addr+(s.phone?' · 📞 '+s.phone:'')):null,
+   h('div',{className:'text-sm text-gray-600'},'★ '+(+s.r).toFixed(1)+' ('+s.n+') · '+cs.length+' '+t('cmp')+' · '+ws.length+' '+t('warns')),
+   h('p',{className:'text-xs text-gray-500'},t('flow')),
+   card(s),
+   h('h3',{className:'font-bold pt-2'},'🔔 '+t('complaints')),
+   cs.length?cs.map(c=>h('div',{key:c.id,className:'p-3 rounded-2xl border space-y-1 '+(c.seen?'bg-white border-gray-100':'bg-red-50 border-red-200')},h('div',{className:'text-xs text-gray-500'},c.who+' · '+dt(c.date)),h('div',{className:'text-sm'},c.txt),c.seen?null:h('button',{onClick:()=>setComps(x=>x.map(y=>y.id===c.id?{...y,seen:1}:y)),className:'h-10 px-3 rounded-lg bg-white border text-sm'},t('markSeen')))):h('p',{className:'text-sm text-gray-500'},t('noComp')),
+   h('h3',{className:'font-bold pt-2'},'📢 '+t('warns')),
+   h('div',{className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},h('textarea',{value:f.wt||'',onChange:e=>setF({...f,wt:e.target.value}),rows:3,placeholder:t('warnPh'),className:'w-full border border-gray-200 rounded-lg p-2 text-sm'}),btn(()=>{if(!(f.wt||'').trim())return;upS(s.id,y=>({...y,warns:[{id:Date.now(),date:new Date().toISOString(),txt:f.wt.trim(),fixed:0},...(y.warns||[])]}));setF({...f,wt:''})},'warnBtn','bg-orange-500 text-white')),
+   ...ws.map(w=>h('div',{key:w.id,className:'p-3 rounded-2xl border flex items-center gap-2 '+(w.fixed?'bg-emerald-50 border-emerald-200':'bg-orange-50 border-orange-200')},h('div',{className:'flex-1 text-sm'},h('div',{className:'text-xs text-gray-500'},dt(w.date)+(w.dis?' · '+t('closedS'):'')),w.txt),h('button',{onClick:()=>upS(s.id,y=>({...y,warns:y.warns.map(x=>x.id===w.id?{...x,fixed:x.fixed?0:1}:x)})),className:'h-10 px-3 rounded-lg text-sm font-semibold '+(w.fixed?'bg-emerald-600 text-white':'bg-white border')},(w.fixed?'✔ ':'')+t('fixed')))),
+   h('h3',{className:'font-bold pt-2'},'⭐ '+t('reviews')),
+   rv.length?rv.map((r,i)=>h('div',{key:i,className:'p-3 bg-white rounded-xl text-sm border border-gray-100'},h('span',{className:'text-amber-500'},'★'.repeat(r.st)),' '+r.who+': '+r.cm)):h('p',{className:'text-sm text-gray-500'},t('noRev')));
+ };
+ const card=s=>h('div',{key:s.id,className:'p-3 bg-white rounded-2xl border space-y-2 '+(s.susp?'border-red-300':'border-gray-100')},
+  h('div',{className:'flex items-center gap-2'},h('span',{className:'text-2xl'},Lg(s,'w-10 h-10 rounded-xl object-cover')),
+   h('button',{onClick:()=>setVs(s.id),className:'flex-1 min-w-0 text-left'},h('div',{className:'font-medium text-sm'},L(s)),h('div',{className:'text-xs text-gray-500'},t('sold')+' '+$(soldOf(s.id))),h('div',{className:'text-xs text-blue-600 font-medium'},t('profileV'))),
+   h('div',{className:'flex flex-col gap-1 items-end'},s.susp?bdg('bg-red-100 text-red-600',t('suspended')):null,cc(s.id)?bdg(cc(s.id)>=3?'bg-red-100 text-red-600':'bg-amber-100 text-amber-800',cc(s.id)+' '+t('cmp')):null)),
+  h('div',{className:'flex gap-2'},
+   h('button',{onClick:()=>upS(s.id,y=>({...y,paid:y.paid?0:1})),className:'flex-1 h-11 rounded-xl text-sm font-semibold '+(s.paid?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-800')},s.paid?'✔ '+t('paid'):t('unpaid')),
+   h('button',{onClick:()=>upS(s.id,y=>({...y,susp:y.susp?0:1})),className:'flex-1 h-11 rounded-xl text-sm font-semibold '+(s.susp?'bg-emerald-600 text-white':'bg-orange-100 text-orange-700')},t(s.susp?'reactivate':'suspend')),
+   h('button',{onClick:()=>cf===s.id?delSup(s.id):setCf(s.id),className:'flex-1 h-11 rounded-xl text-sm font-semibold '+(cf===s.id?'bg-red-600 text-white':'bg-red-50 text-red-600')},t(cf===s.id?'sure':'del'))));
+ if(vs&&sups.some(x=>x.id===vs))return detail(sups.find(x=>x.id===vs));
+ return h('div',{className:'p-3 pb-24 space-y-3'},
+  h('h2',{className:'font-bold text-lg'},t('pending')),
+  pend.length?pend.map(s=>h('div',{key:s.id,className:'flex items-center gap-3 p-3 bg-amber-50 rounded-2xl border border-amber-200'},
+   h('span',{className:'text-2xl'},Lg(s,'w-10 h-10 rounded-xl object-cover')),h('div',{className:'flex-1 font-medium text-sm'},L(s)),
+   h('button',{onClick:()=>upS(s.id,y=>({...y,ok:1})),className:'px-4 h-11 rounded-xl bg-emerald-600 text-white font-semibold'},t('approve')))):h('p',{className:'text-sm text-gray-500'},t('nonePending')),
+  h('h2',{className:'font-bold text-lg pt-2'},'🔔 '+t('complaints')),
+  comps.length?comps.map(c=>h('div',{key:c.id,className:'p-3 rounded-2xl border space-y-1 '+(c.seen?'bg-white border-gray-100':'bg-red-50 border-red-200')},
+   h('div',{className:'flex justify-between text-sm'},h('b',null,L(supOf(c.sid))),h('span',{className:'text-xs text-gray-500'},new Date(c.date).toLocaleDateString(lang==='zh'?'zh-CN':'es-AR'))),
+   h('div',{className:'text-xs text-gray-500'},c.who),h('div',{className:'text-sm'},c.txt),
+   c.seen?null:h('button',{onClick:()=>setComps(x=>x.map(y=>y.id===c.id?{...y,seen:1}:y)),className:'h-10 px-3 rounded-lg bg-white border text-sm'},t('markSeen')))):h('p',{className:'text-sm text-gray-500'},t('noComp')),
+  h('h2',{className:'font-bold text-lg pt-2'},t('mySup')),
+  h('div',{className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},
+   h('label',{className:'text-xs text-gray-500 block'},t('monthFee'),h('input',{type:'number',min:0,value:feeM,onChange:e=>setFeeM(Math.max(0,+e.target.value||0)),className:'w-full h-11 border border-gray-200 rounded-lg px-2 text-base'})),
+   h('div',{className:'flex justify-between text-sm'},h('span',null,t('expected')),h('b',null,$(feeM*act.length))),
+   h('div',{className:'flex justify-between text-sm'},h('span',null,t('collected')),h('b',{className:'text-emerald-700'},$(feeM*act.filter(s=>s.paid).length)))),
+  h('div',{className:'grid md:grid-cols-2 gap-3 items-start'},ap.map(card)),
+  h('h2',{className:'font-bold text-lg pt-2'},'🐞 '+t('bugsT')+' ('+bugs.length+')'),
+  bugs.length?bugs.map(b=>h('div',{key:b.id,className:'p-3 rounded-2xl border space-y-1 '+(b.seen?'bg-white border-gray-100':'bg-amber-50 border-amber-200')},h('div',{className:'text-xs text-gray-500'},b.who+' · '+new Date(b.date).toLocaleDateString(lang==='zh'?'zh-CN':'es-AR')),h('div',{className:'text-sm'},b.txt),h('div',{className:'flex gap-2'},b.seen?null:h('button',{onClick:()=>setBugs(x=>x.map(y=>y.id===b.id?{...y,seen:1}:y)),className:'h-10 px-3 rounded-lg bg-white border text-sm'},t('markSeen')),h('button',{onClick:()=>setBugs(x=>x.filter(y=>y.id!==b.id)),className:'h-10 px-3 rounded-lg bg-red-50 text-red-600 text-sm'},t('del'))))):h('p',{className:'text-sm text-gray-500'},t('noBugs')),adminsBox());
+};
+
+/* ---- Auth, extras proveedor, operaciones admin ---- */
+const fld=(k,l,tp)=>h('input',{key:k,type:tp||'text',value:f[k]||'',onChange:e=>setF({...f,[k]:e.target.value}),placeholder:t(l),className:'w-full h-12 px-4 rounded-xl border border-gray-200 bg-white outline-none focus:border-emerald-500'});
+const btn=(fn,l,c)=>h('button',{key:l,onClick:fn,className:'w-full h-14 rounded-2xl font-bold '+(c||'bg-emerald-600 text-white')},t(l));
+const lnk=(m,l)=>h('button',{key:m,onClick:()=>{setAuth(m);setMsg('');setF({})},className:'block mx-auto text-sm text-blue-600 font-medium h-10'},t(l));
+const live=rec?orders.find(o=>o.id===rec.id)||rec:null;
+const aut=()=>{
+ const login=()=>{const u=users.find(x=>x.user.toLowerCase()===(f.user||'').trim().toLowerCase()&&x.pass===f.pass);if(u){setMeU(u.user);setRole(u.role);setScreen('list');setF({});setMsg('')}else setMsg('badLogin')};
+ const reg=()=>{
+  if(!f.name||!f.user||!f.email||!f.pass||!f.addr)return setMsg('req');
+  if(users.some(x=>x.user.toLowerCase()===f.user.trim().toLowerCase()))return setMsg('dup');
+  if(f.sp){const id=Date.now();setSups(s=>[...s,{id,logo:'\ud83c\udfea',es:f.name,zh:f.name,r:0,n:0,min:0,fee:0,ok:0,paid:0,susp:0,addr:f.addr,zone:f.addr}]);setUsers([...users,{user:f.user,pass:f.pass,role:'supplier',sid:id,name:f.name,email:f.email}]);setAuth('login');setF({});return setMsg('pendOk')}
+  const u={user:f.user,pass:f.pass,role:'buyer',name:f.name,email:f.email,addrs:[f.addr],act:0};setUsers([...users,u]);setMeU(u.user);setRole('buyer');setScreen('list');setF({});setMsg('')};
+ const send=()=>users.some(x=>x.email===f.email&&x.role!=='admin')?(setF({...f,step:1}),setMsg('')):setMsg('noMail');
+ const reset=()=>{if(!f.np)return setMsg('req');setUsers(us=>us.map(x=>x.email===f.email&&x.role!=='admin'?{...x,pass:f.np}:x));setAuth('login');setF({});setMsg('saved')};
+ const bad=['badLogin','noMail','req','dup'].includes(msg);
+ return h('div',{className:'p-4 space-y-3'},
+  h('div',{className:'text-center py-3'},h('div',{className:'text-5xl'},'🛒'),h('h2',{className:'font-bold text-xl mt-1'},t(auth==='login'?'login':auth==='reg'?'register':'forgot'))),
+  null,
+  msg?h('div',{className:'p-3 rounded-xl text-sm '+(bad?'bg-red-50 text-red-600':'bg-emerald-50 text-emerald-700')},t(msg)):null,
+  ...(auth==='login'?[fld('user','user'),fld('pass','pass','password'),btn(login,'login'),lnk('forgot','forgot'),lnk('reg','register')]
+  :auth==='reg'?[fld('name','name'),fld('user','user'),fld('email','email','email'),fld('pass','pass','password'),fld('addr',f.sp?'zone':'mainAddr'),h('label',{key:'sp',className:'flex gap-2 items-center text-sm'},h('input',{type:'checkbox',checked:!!f.sp,onChange:e=>setF({...f,sp:e.target.checked}),className:'w-5 h-5'}),t('isSup')),btn(reg,'register'),lnk('login','login')]
+  :[fld('email','email','email'),...(f.step===1?[h('p',{key:'m',className:'text-sm text-gray-600'},'📧 '+t('mailSent')+' '+f.email),btn(()=>setF({...f,step:2}),'openLink','bg-blue-600 text-white')]:f.step===2?[fld('np','newPass','password'),btn(reset,'save')]:[btn(send,'sendLink')]),lnk('login','back')]));
+};
+const pExtra=()=>{
+ const s=sups.find(x=>x.id===asId),upd=(k,v)=>setSups(ss=>ss.map(x=>x.id===asId?{...x,[k]:v}:x)),addP=o=>setProds(ps=>[...ps,{id:Date.now()+Math.random(),sid:asId,e:'📦',desc:'',u:null,b:null,...o}]);
+ const inp=(l,v,fn,tp)=>h('label',{key:l,className:'text-[10px] text-gray-500 flex-1'},t(l),h('input',{type:tp||'number',value:v,onChange:e=>fn(e.target.value),className:'w-full h-11 border border-gray-200 rounded-lg px-2 text-sm'}));
+ const grpF=(v,kp,ks)=>h('div',{key:v,className:'flex-1 p-2 rounded-xl bg-gray-50 space-y-1'},h('div',{className:'text-xs font-semibold'},t(v==='u'?'perUnit':'perBox')),h('div',{className:'flex gap-1'},inp('price',f[kp]||'',x=>setF({...f,[kp]:x})),inp('stock',f[ks]||'',x=>setF({...f,[ks]:x}))));
+ return h(React.Fragment,null,
+  h('h2',{className:'font-bold text-lg pt-2'},'⚙️ '+t('profile')),
+  h('div',{className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},
+   h('div',{className:'flex items-center gap-3'},h('div',{className:'w-16 h-16 rounded-2xl bg-blue-50 text-3xl flex items-center justify-center overflow-hidden shrink-0'},Lg(s,'w-full h-full object-cover')),h('label',{className:'text-xs text-gray-500 flex-1'},'📷 '+t('logoPhoto'),h('input',{type:'file',accept:'image/*',onChange:e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>upd('img',r.result);r.readAsDataURL(fl)},className:'block w-full text-xs mt-1'}))),
+   inp('supName',L(s),v=>setSups(ss=>ss.map(x=>x.id===asId?{...x,es:v,zh:v}:x)),'text'),inp('addrS',s.addr||'',v=>upd('addr',v),'text'),inp('phone',s.phone||'',v=>upd('phone',v),'tel'),inp('zone',s.zone||'',v=>upd('zone',v),'text'),h('div',{className:'flex gap-2'},inp('shipFee',s.fee,v=>upd('fee',Math.max(0,+v||0))),inp('minBuy',s.min,v=>upd('min',Math.max(0,+v||0))))),
+  h('h2',{className:'font-bold text-lg pt-2'},'➕ '+t('addProd')),
+  h('div',{className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},inp('pName',f.pn||'',v=>setF({...f,pn:v}),'text'),inp('desc',f.pd||'',v=>setF({...f,pd:v}),'text'),
+   h('label',{className:'text-xs text-gray-500 block'},'📷 '+t('photo'),h('input',{type:'file',accept:'image/*',onChange:e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>setF(x=>({...x,pi:r.result}));r.readAsDataURL(fl)},className:'block w-full text-xs mt-1'})),
+   f.pi?h('img',{src:f.pi,className:'w-16 h-16 object-cover rounded-xl'}):null,
+   h('div',{className:'flex gap-2'},grpF('u','up','us'),grpF('b','bp','bs')),
+   h('p',{className:'text-xs text-gray-500'},t('leaveEmpty')),
+   btn(()=>{if(!f.pn||!(+f.up>0||+f.bp>0))return;addP({es:f.pn,zh:f.pn,desc:f.pd||'',img:f.pi,u:+f.up>0?{price:+f.up,stock:+f.us||0}:null,b:+f.bp>0?{price:+f.bp,stock:+f.bs||0}:null});setF({...f,pn:'',pd:'',up:'',us:'',bp:'',bs:'',pi:''})},'addProd')),
+  h('div',{className:'p-3 bg-white rounded-2xl border border-gray-100 space-y-2'},
+   h('label',{className:'text-xs text-gray-500'},t('bulk'),h('textarea',{value:f.bk||'',onChange:e=>setF({...f,bk:e.target.value}),rows:4,placeholder:'Alfajor,500,100,5700,10',className:'w-full border border-gray-200 rounded-lg p-2 text-sm mt-1'})),
+   btn(()=>{(f.bk||'').split('\n').forEach(l=>{const[a,b,c,d,e]=l.split(',');if(a&&a.trim()&&(+b>0||+d>0))addP({es:a.trim(),zh:a.trim(),u:+b>0?{price:+b,stock:+c||0}:null,b:+d>0?{price:+d,stock:+e||0}:null})});setF({...f,bk:''})},'load','bg-blue-600 text-white')));
+};
+const opsView=()=>h('div',{className:'px-3 pb-24 -mt-20 space-y-3'},h('h2',{className:'font-bold text-lg'},t('allOps')),
+ h('div',{className:'overflow-x-auto bg-white rounded-2xl border border-gray-100'},h('table',{className:'w-full text-xs'},
+  h('thead',{className:'bg-gray-50 text-gray-500'},h('tr',null,['#',t('sup'),t('date'),t('total')].map(x=>h('th',{key:x,className:'p-2 text-left'},x)))),
+  h('tbody',null,orders.map(o=>h('tr',{key:o.id,className:'border-t'},h('td',{className:'p-2'},inv(o)),h('td',{className:'p-2'},L(supOf(o.sid))),h('td',{className:'p-2'},new Date(o.date).toLocaleDateString(lang==='zh'?'zh-CN':'es-AR')),h('td',{className:'p-2'},$(o.total))))))));
+
+/* ---- Layout ---- */
+const body=!me?aut():isB?(screen==='list'?bList():screen==='sup'?bSup():screen==='cart'?bCart():bRec()):isS?pView():h('div',null,aView(),opsView());
+const bugBox=()=>h('div',{className:'px-3 pb-24 pt-2'},
+ bg===1?h('div',{className:'p-3 bg-white rounded-2xl border border-gray-200 space-y-2'},h('textarea',{value:f.bt||'',onChange:e=>setF({...f,bt:e.target.value}),rows:4,placeholder:t('bugPh'),className:'w-full border border-gray-200 rounded-lg p-2 text-sm'}),btn(()=>{if(!(f.bt||'').trim())return;setBugs(b=>[{id:Date.now(),who:me?me.name+' · '+t(me.role):'—',txt:f.bt.trim(),date:new Date().toISOString(),seen:0},...b]);setF({...f,bt:''});setBg(2)},'bugSend','bg-gray-900 text-white'),h('button',{onClick:()=>setBg(0),className:'w-full h-10 text-sm text-gray-500'},t('close'))):
+ bg===2?h('button',{onClick:()=>setBg(1),className:'block mx-auto text-sm text-emerald-700 h-10'},'✅ '+t('bugSent')):
+ h('button',{onClick:()=>setBg(1),className:'block mx-auto text-xs text-gray-500 h-9 underline'},'🐞 '+t('bugBtn')));
+const edge=s=>({[s]:'max(12px,calc(50% - var(--hw)))',bottom:'max(16px,env(safe-area-inset-bottom,0px))'});
+return h('div',null,
+ h('div',{className:'mx-auto max-w-[430px] md:max-w-4xl min-h-screen bg-gray-50 shadow-xl relative'},
+  h('header',{className:'sticky z-30 bg-white border-b border-gray-200',style:{top:'env(safe-area-inset-top,0px)'}},
+   isA?h('div',{className:'flex items-center justify-between bg-gray-100 px-3 h-10 text-xs'},h('span',{className:'font-semibold text-emerald-700'},'👑 '+t('admin')+' · '+me.name+((comps.some(c=>!c.seen)||bugs.some(b=>!b.seen))?' 🔴':'')),h('button',{onClick:()=>{setMeU(null);setVs(null)},className:'h-9 px-2 text-gray-500'},t('logout'))):null,
+   isB&&role==='buyer'?h('div',{className:'flex items-center justify-between gap-2 px-3 py-2'},
+    h('div',{className:'min-w-0'},h('div',{className:'text-[11px] text-gray-500'},t('shipTo')),h('div',{className:'text-sm font-semibold truncate'},'\ud83d\udccd '+curAddr)),
+    h('button',{onClick:()=>setPick(!pick),className:'shrink-0 px-4 h-11 rounded-xl bg-blue-600 text-white text-sm font-semibold'},t('change'))):null,
+   pick&&isB&&role==='buyer'?h('div',{className:'px-3 pb-3 space-y-2'},...addrs.map((a,i)=>h('button',{key:i,onClick:()=>{setUsers(us=>us.map(u=>u.user===meU?{...u,act:i}:u));setPick(false)},className:'w-full text-left p-3 rounded-xl border text-sm '+(i===br?'border-emerald-600 bg-emerald-50 font-semibold':'border-gray-200')},a)),h('div',{className:'flex gap-2'},h('input',{value:f.na||'',onChange:e=>setF({...f,na:e.target.value}),placeholder:t('newAddr'),className:'flex-1 h-11 px-3 rounded-xl border border-gray-200 text-sm'}),h('button',{onClick:()=>{if(f.na&&f.na.trim()){setUsers(us=>us.map(u=>u.user===meU?{...u,addrs:[...u.addrs,f.na.trim()],act:u.addrs.length}:u));setF({...f,na:''});setPick(false)}},className:'px-3 h-11 rounded-xl bg-emerald-600 text-white text-sm font-semibold'},t('addAddr')))):null),
+  body,bugBox()),
+ role==='buyer'&&screen==='sup'&&cnt>0?h('button',{onClick:()=>setScreen('cart'),className:'fixed z-40 h-12 px-4 rounded-full bg-emerald-600 text-white font-bold shadow-xl',style:edge('right')},'🛒 '+cnt+' · '+$(sub)):null,
+ h('button',{onClick:()=>setLang(lang==='es'?'zh':'es'),className:'fixed z-40 h-12 px-4 rounded-full bg-gray-900 text-white font-bold shadow-xl',style:edge('left')},lang==='es'?'🌐 🇨🇳 中文':'🌐 🇦🇷 ES'),
+ doc?h('div',{className:'fixed inset-0 z-50 bg-black/60 overflow-auto p-3 flex justify-center items-start'},
+  h('div',{className:'w-full max-w-[794px]'},
+   h('div',{className:'noprint flex gap-2 mb-2'},
+    h('button',{onClick:()=>window.print(),className:'flex-1 h-12 rounded-xl bg-blue-600 text-white font-bold'},'🖨️ '+t('print')),
+    h('button',{onClick:()=>setDoc(null),className:'flex-1 h-12 rounded-xl bg-white font-bold'},t('close'))),
+   h('div',{className:'shadow-2xl'},Doc(doc)))):null);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+</script></body></html>
